@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  refreshToken?: string;
 }
 
 export interface Register {
@@ -22,4 +23,8 @@ export interface Login {
 export interface TypedRequest<T = {}> extends Request {
   body: T;
   user?: { userId: string; email: string };
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }
