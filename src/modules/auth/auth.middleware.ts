@@ -1,14 +1,24 @@
 import jwt from "jsonwebtoken";
-import { type RequestHandler } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { logger } from "../../common/utils/loggers.js";
 import { env } from "../../config/env.js";
 
-/**
- * Middleware to protect routes by verifying JWT in Authorization header
- */
-const authMiddleware: RequestHandler = (req, res, next) => {
-  // Check Authorization header or cookies
-  let token = req.headers.authorization || req.cookies.accessToken;
+interface MyJwtPayload {
+  id: string;
+  email: string;
+  role: string;
+}
+
+interface AuthRequest extends Request {
+  user?: MyJwtPayload;
+}
+
+const authMiddleware = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  let token = req.headers.authorization || req.cookies?.accessToken;
 
   if (!token) {
     logger.warn("Unauthorized: No token provided");
@@ -18,17 +28,14 @@ const authMiddleware: RequestHandler = (req, res, next) => {
     });
   }
 
-  // Handle 'Bearer <token>' format
   if (token.startsWith("Bearer ")) {
     token = token.slice(7);
   }
 
   try {
-    // Verify accessToken
-    const decoded = jwt.verify(token, env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_SECRET) as MyJwtPayload;
 
-    // Attach user payload to request
-    (req as any).user = decoded;
+    req.user = decoded;
 
     return next();
   } catch (error) {

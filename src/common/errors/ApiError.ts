@@ -6,10 +6,6 @@ class ApiError extends Error {
     super(message);
     this.statusCode = statusCode;
     this.success = false;
-
-    if (typeof (Error as any).captureStackTrace === "function") {
-      (Error as any).captureStackTrace(this, this.constructor);
-    }
   }
 }
 
