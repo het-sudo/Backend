@@ -2,12 +2,7 @@ import jwt from "jsonwebtoken";
 import { type Request, type Response, type NextFunction } from "express";
 import { logger } from "../../common/utils/loggers.js";
 import { env } from "../../config/env.js";
-
-interface MyJwtPayload {
-  id: string;
-  email: string;
-  role: string;
-}
+import type { MyJwtPayload } from "./auth.interface.js";
 
 interface AuthRequest extends Request {
   user?: MyJwtPayload;

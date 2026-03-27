@@ -1,46 +1,30 @@
 {
   "compilerOptions": {
-    /* 1. File Layout - UNCOMMENT THESE */
     "rootDir": "./src",
     "outDir": "./dist",
-
-    /* 2. Environment Settings */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-
     "target": "ESNext",
-    "lib": ["ESNext"], // Adds modern JS features
-    "types": ["node"], // Tells TS to look for @types/node
+    "lib": ["ESNext"],
+    "types": ["node"],
     "allowImportingTsExtensions": false,
-    /* 3. Output */
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-
-    /* 4. Strictness - KEEP THESE ON */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
-    /* 5. Senior Style Options - UNCOMMENT THESE */
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    /* 6. Fixes & Compatibility */
     "skipLibCheck": true,
-    "esModuleInterop": true, // Crucial for importing non-ESM libs
     "forceConsistentCasingInFileNames": true,
     "moduleDetection": "force",
-
-    /* 7. Remove React if it's Backend only */
-    // "jsx": "react-jsx", // Comment out or remove for pure backend
-
     "verbatimModuleSyntax": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*"], // Tell TS to only look in src
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

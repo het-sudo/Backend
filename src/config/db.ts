@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 import { env } from "./env.js";
 import { logger } from "../common/utils/loggers.js";
 
-/**
- * Connects to MongoDB database using URI from environment variables
- */
+// Connects to MongoDB database using URI from environment variables
+
 export const connectDB = async (): Promise<void> => {
   try {
     const conn = await mongoose.connect(env.MONGO_URI);

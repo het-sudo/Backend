@@ -7,6 +7,7 @@ import authMiddleware from "./auth.middleware.js";
 const router = Router();
 
 // Define endpoints
+
 router.post("/register", validate(registerSchmea), register);
 router.post("/login", validate(loginSchema), login);
 router.post("/refresh-token", refreshToken);

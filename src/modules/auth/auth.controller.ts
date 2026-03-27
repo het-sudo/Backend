@@ -52,14 +52,14 @@ export const login: RequestHandler = asyncHandler(
     logger.info(`Login successful for user: ${email}`);
 
     // Set cookies
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 15 * 60 * 1000,
-    }); // 15 mins
+    // res.cookie("accessToken", accessToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   maxAge: 15 * 60 * 1000,
+    // }); // 15 mins
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     }); // 7 days
 
@@ -67,7 +67,6 @@ export const login: RequestHandler = asyncHandler(
       success: true,
       message: "User login success",
       accessToken,
-      refreshToken,
       user,
     });
   },
@@ -87,21 +86,21 @@ export const refreshToken: RequestHandler = asyncHandler(
     const tokens = await authService.refreshUserTokens(refreshToken);
 
     // Update cookies
-    res.cookie("accessToken", tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 15 * 60 * 1000,
-    });
+    // res.cookie("accessToken", tokens.accessToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   maxAge: 15 * 60 * 1000,
+    // });
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
       success: true,
       message: "Tokens refreshed successfully",
-      ...tokens,
+      accessToken: tokens.accessToken,
     });
   },
 );
@@ -119,7 +118,7 @@ export const logout: RequestHandler = asyncHandler(
     await authService.logoutUser(userId);
 
     // Clear cookies on logout
-    res.clearCookie("accessToken");
+    // res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
 
     res.status(200).json({

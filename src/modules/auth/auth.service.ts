@@ -31,20 +31,25 @@ export const registerUser = async ({
       throw new ApiError(400, "Email already exists");
     }
 
-    const hashedpassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       name,
       email,
-      password: hashedpassword,
+      password: hashedPassword,
     });
 
     logger.info(`User registered successfully: ${email}`);
 
     const userObj = newUser.toObject();
-    const { password: _, ...userWithoutPassword } = userObj;
 
-    return userWithoutPassword as Pick<IUser, "_id" | "name" | "email">;
+    const userWithoutPassword = {
+      _id: userObj._id,
+      name: userObj.name,
+      email: userObj.email,
+    };
+
+    return userWithoutPassword;
   } catch (error) {
     if (error instanceof ApiError) throw error;
 

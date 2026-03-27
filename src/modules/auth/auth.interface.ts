@@ -28,3 +28,9 @@ export interface TypedRequest<T = {}> extends Request {
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
+
+export interface MyJwtPayload {
+  id: string;
+  email: string;
+  role: string;
+}
