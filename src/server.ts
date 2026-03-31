@@ -3,7 +3,7 @@ import { env } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import { logger } from "./common/utils/loggers.js";
 
-const bootstrap = async () => {
+const Connect = async () => {
   try {
     await connectDB();
     logger.info("Database connected successfully");
@@ -12,9 +12,9 @@ const bootstrap = async () => {
       logger.info(` Server listening on http://localhost:${PORT}`);
     });
   } catch (error) {
-    logger.error("Bootstrap failed:", error);
+    logger.error("Connection failed:", error);
     process.exit(1);
   }
 };
 
-bootstrap();
+Connect();

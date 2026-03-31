@@ -5,14 +5,13 @@ import bcrypt from "bcrypt";
 import { env } from "../../config/env.js";
 import { logger } from "../../common/utils/loggers.js";
 import jwt, { type SignOptions } from "jsonwebtoken";
-import type { StringValue } from "ms";
 
 const accessTokenOptions: SignOptions = {
-  expiresIn: env.ACCESS_TOKEN_EXPIRY as StringValue,
+  expiresIn: env.ACCESS_TOKEN_EXPIRY,
 };
 
 const refreshTokenOptions: SignOptions = {
-  expiresIn: env.REFRESH_TOKEN_EXPIRY as StringValue,
+  expiresIn: env.REFRESH_TOKEN_EXPIRY,
 };
 
 //Registers a new user in the system
@@ -151,7 +150,6 @@ export const refreshUserTokens = async (refreshToken: string) => {
     return tokens;
   } catch (error) {
     if (error instanceof ApiError) throw error;
-
     const message =
       error instanceof Error
         ? error.message

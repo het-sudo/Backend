@@ -51,12 +51,6 @@ export const login: RequestHandler = asyncHandler(
 
     logger.info(`Login successful for user: ${email}`);
 
-    // Set cookies
-    // res.cookie("accessToken", accessToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   maxAge: 15 * 60 * 1000,
-    // }); // 15 mins
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
@@ -85,12 +79,6 @@ export const refreshToken: RequestHandler = asyncHandler(
 
     const tokens = await authService.refreshUserTokens(refreshToken);
 
-    // Update cookies
-    // res.cookie("accessToken", tokens.accessToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   maxAge: 15 * 60 * 1000,
-    // });
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       secure: false,
