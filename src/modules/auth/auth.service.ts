@@ -20,44 +20,32 @@ export const registerUser = async ({
   email,
   password,
 }: Register): Promise<Pick<IUser, "_id" | "name" | "email">> => {
-  try {
-    const exist = await User.findOne({ email });
+  const exist = await User.findOne({ email });
 
-    if (exist) {
-      logger.warn(
-        `Registration failed: User with email ${email} already exists`,
-      );
-      throw new ApiError(400, "Email already exists");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
-    logger.info(`User registered successfully: ${email}`);
-
-    const userObj = newUser.toObject();
-
-    const userWithoutPassword = {
-      _id: userObj._id,
-      name: userObj.name,
-      email: userObj.email,
-    };
-
-    return userWithoutPassword;
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-
-    const message =
-      error instanceof Error ? error.message : "Internal server error";
-
-    logger.error(`Error in registerUser: ${message}`);
-    throw new ApiError(500, message);
+  if (exist) {
+    logger.warn(`Registration failed: User with email ${email} already exists`);
+    throw new ApiError(400, "Email already exists");
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  logger.info(`User registered successfully: ${email}`);
+
+  const userObj = newUser.toObject();
+
+  const userWithoutPassword = {
+    _id: userObj._id,
+    name: userObj.name,
+    email: userObj.email,
+  };
+
+  return userWithoutPassword;
 };
 
 //Helper to generate access and refresh tokens
@@ -124,40 +112,29 @@ export const loginUser = async ({ email, password }: Login) => {
 // Refreshes tokens using a valid refresh token
 
 export const refreshUserTokens = async (refreshToken: string) => {
-  try {
-    if (!refreshToken) {
-      throw new ApiError(401, "Refresh token is required");
-    }
-
-    const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as {
-      userId: string;
-    };
-
-    const user = await User.findById(decoded.userId);
-
-    if (!user || user.refreshToken !== refreshToken) {
-      logger.warn(`Invalid refresh token for userId: ${decoded.userId}`);
-      throw new ApiError(403, "Invalid refresh token");
-    }
-
-    const tokens = generateTokens(user);
-
-    user.refreshToken = tokens.refreshToken;
-    await user.save();
-
-    logger.info(`Tokens refreshed for user: ${user.email}`);
-
-    return tokens;
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Invalid or expired refresh token";
-
-    logger.error(`Error in refreshTokens: ${message}`);
-    throw new ApiError(401, message);
+  if (!refreshToken) {
+    throw new ApiError(401, "Refresh token is required");
   }
+
+  const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as {
+    userId: string;
+  };
+
+  const user = await User.findById(decoded.userId);
+
+  if (!user || user.refreshToken !== refreshToken) {
+    logger.warn(`Invalid refresh token for userId: ${decoded.userId}`);
+    throw new ApiError(403, "Invalid refresh token");
+  }
+
+  const tokens = generateTokens(user);
+
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
+
+  logger.info(`Tokens refreshed for user: ${user.email}`);
+
+  return tokens;
 };
 
 // Logs out user
@@ -165,17 +142,10 @@ export const refreshUserTokens = async (refreshToken: string) => {
 export const logoutUser = async (
   userId: string,
 ): Promise<{ message: string }> => {
-  try {
-    await User.findByIdAndUpdate(userId, {
-      $unset: { refreshToken: 1 },
-    });
+  await User.findByIdAndUpdate(userId, {
+    $unset: { refreshToken: 1 },
+  });
 
-    logger.info(`User logged out successfully: ${userId}`);
-    return { message: "Logged out successfully" };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Logout failed";
-
-    logger.error(`Logout failed for user ${userId}: ${message}`);
-    throw new ApiError(500, message);
-  }
+  logger.info(`User logged out successfully: ${userId}`);
+  return { message: "Logged out successfully" };
 };

@@ -11,18 +11,7 @@ import type { loginSchema, registerSchmea } from "./auth.validator.js";
 
 export const register: RequestHandler = asyncHandler(
   async (req: ValidatedRequest<typeof registerSchmea>, res: Response) => {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      throw new ApiError(400, "All fields are required");
-    }
-
-    const newUser = await authService.registerUser({
-      name,
-      email,
-      password,
-    });
-
+    const newUser = await authService.registerUser(req.body);
     res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -35,18 +24,11 @@ export const register: RequestHandler = asyncHandler(
 
 export const login: RequestHandler = asyncHandler(
   async (req: ValidatedRequest<typeof loginSchema>, res: Response) => {
-    const { email, password } = req.body;
+    const { accessToken, refreshToken, user } = await authService.loginUser(
+      req.body,
+    );
 
-    if (!email || !password) {
-      throw new ApiError(400, "Email and password are Required");
-    }
-
-    const { accessToken, refreshToken, user } = await authService.loginUser({
-      email,
-      password,
-    });
-
-    logger.info(`Login successful for user: ${email}`);
+    logger.info(`Login successful for user: ${user.email}`);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -102,7 +84,9 @@ export const logout: RequestHandler = asyncHandler(
 
     await authService.logoutUser(userId);
 
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+    });
 
     res.status(200).json({
       success: true,
