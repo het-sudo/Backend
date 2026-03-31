@@ -5,15 +5,21 @@ import type {
   TypedRequest,
   RefreshTokenRequest,
 } from "./auth.interface.js";
+import type { ValidatedRequest } from "express-zod-safe";
 import ApiError from "../../common/errors/ApiError.js";
 import * as authService from "./auth.service.js";
 import type { Request, Response, RequestHandler } from "express";
 import { logger } from "../../common/utils/loggers.js";
+import type {
+  loginSchema,
+  refreshTokenSchema,
+  registerSchmea,
+} from "./auth.validator.js";
 
 //Controller for user registration
 
 export const register: RequestHandler = asyncHandler(
-  async (req: Request<{}, {}, Register>, res: Response) => {
+  async (req: ValidatedRequest<typeof registerSchmea>, res: Response) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -37,7 +43,7 @@ export const register: RequestHandler = asyncHandler(
 // Controller for user login , Issues both access and refresh tokens
 
 export const login: RequestHandler = asyncHandler(
-  async (req: TypedRequest<Login>, res: Response) => {
+  async (req: ValidatedRequest<typeof loginSchema>, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -69,7 +75,7 @@ export const login: RequestHandler = asyncHandler(
 // Controller for refreshing tokens
 
 export const refreshToken: RequestHandler = asyncHandler(
-  async (req: TypedRequest<RefreshTokenRequest>, res: Response) => {
+  async (req: ValidatedRequest<typeof refreshTokenSchema>, res: Response) => {
     // Try to get refreshToken from cookies or body
     const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
 

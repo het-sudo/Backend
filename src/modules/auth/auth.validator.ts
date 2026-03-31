@@ -1,40 +1,54 @@
 import z from "zod";
-import type { Request, Response, NextFunction } from "express";
 
-export const registerSchmea = z.object({
+export const registerSchmea = {
   body: z.object({
     name: z.string().min(2, "Name Too Short"),
     email: z.email("invalid email"),
     password: z.string().min(6, "Minimun passwrod should be of six length"),
   }),
-});
+};
 
-export const loginSchema = z.object({
+export const loginSchema = {
   body: z.object({
     email: z.email("Invalid Email"),
     password: z.string().min(6, "Minimun passwrod should be of six length"),
   }),
-});
+};
 
-export const userSchema = z.object({
+export const userSchema = {
   body: z.object({
     name: z.string().min(2, "Name Too Short"),
     email: z.email("invalid email"),
     password: z.string().min(6, "Minimun passwrod should be of six length"),
   }),
+};
+
+export const refreshTokenSchema = {
+  body: z.object({
+    refreshToken: z.string().min(1, "Refresh token is required").optional(),
+  }),
+};
+
+// For your JWT Payload (Internal data, not a request)
+export const jwtPayloadSchema = z.object({
+  id: z.string(),
+  email: z.email(),
+  role: z.string(),
 });
 
-export const validate =
-  (schema: z.ZodObject<any>) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await schema.parseAsync({
-        body: req.body,
-        query: req.query,
-        params: req.params,
-      });
-      return next();
-    } catch (error: any) {
-      return res.status(400).json(error.errors);
-    }
-  };
+export type MyJwtPayload = z.infer<typeof jwtPayloadSchema>;
+
+// export const validate =
+//   (schema: z.ZodObject<any>) =>
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       await schema.parseAsync({
+//         body: req.body,
+//         query: req.query,
+//         params: req.params,
+//       });
+//       return next();
+//     } catch (error: any) {
+//       return res.status(400).json(error.errors);
+//     }
+//   };
