@@ -10,11 +10,7 @@ import ApiError from "../../common/errors/ApiError.js";
 import * as authService from "./auth.service.js";
 import type { Request, Response, RequestHandler } from "express";
 import { logger } from "../../common/utils/loggers.js";
-import type {
-  loginSchema,
-  refreshTokenSchema,
-  registerSchmea,
-} from "./auth.validator.js";
+import type { loginSchema, registerSchmea } from "./auth.validator.js";
 
 //Controller for user registration
 
@@ -75,7 +71,7 @@ export const login: RequestHandler = asyncHandler(
 // Controller for refreshing tokens
 
 export const refreshToken: RequestHandler = asyncHandler(
-  async (req: ValidatedRequest<typeof refreshTokenSchema>, res: Response) => {
+  async (req: TypedRequest<RefreshTokenRequest>, res: Response) => {
     // Try to get refreshToken from cookies or body
     const refreshToken = req.cookies.refreshToken;
 

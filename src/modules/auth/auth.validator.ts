@@ -23,21 +23,6 @@ export const userSchema = {
   }),
 };
 
-export const refreshTokenSchema = {
-  body: z.object({
-    refreshToken: z.string().min(1, "Refresh token is required").optional(),
-  }),
-};
-
-// For your JWT Payload (Internal data, not a request)
-export const jwtPayloadSchema = z.object({
-  id: z.string(),
-  email: z.email(),
-  role: z.string(),
-});
-
-export type MyJwtPayload = z.infer<typeof jwtPayloadSchema>;
-
 // export const validate =
 //   (schema: z.ZodObject<any>) =>
 //   async (req: Request, res: Response, next: NextFunction) => {

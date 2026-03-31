@@ -1,10 +1,6 @@
 import { Router } from "express";
 import type { IRoute } from "../../common/interface/route.interface.js";
-import {
-  loginSchema,
-  refreshTokenSchema,
-  registerSchmea,
-} from "./auth.validator.js";
+import { loginSchema, registerSchmea } from "./auth.validator.js";
 
 import { login, logout, register, refreshToken } from "./auth.controller.js";
 import authMiddleware from "./auth.middleware.js";
@@ -16,7 +12,7 @@ const router = Router();
 
 router.post("/register", validate(registerSchmea), register);
 router.post("/login", validate(loginSchema), login);
-router.post("/refresh-token", validate(refreshTokenSchema), refreshToken);
+router.post("/refresh-token", refreshToken);
 router.post("/logout", authMiddleware, logout);
 
 // Export as IRoute object
