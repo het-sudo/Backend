@@ -1,14 +1,9 @@
 import asyncHandler from "../../common/utils/asyncHandler.js";
-import type {
-  Login,
-  Register,
-  TypedRequest,
-  RefreshTokenRequest,
-} from "./auth.interface.js";
+import type { TypedRequest, RefreshTokenRequest } from "./auth.interface.js";
 import type { ValidatedRequest } from "express-zod-safe";
 import ApiError from "../../common/errors/ApiError.js";
 import * as authService from "./auth.service.js";
-import type { Request, Response, RequestHandler } from "express";
+import type { Response, RequestHandler } from "express";
 import { logger } from "../../common/utils/loggers.js";
 import type { loginSchema, registerSchmea } from "./auth.validator.js";
 
