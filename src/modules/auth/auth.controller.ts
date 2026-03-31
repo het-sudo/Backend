@@ -77,7 +77,7 @@ export const login: RequestHandler = asyncHandler(
 export const refreshToken: RequestHandler = asyncHandler(
   async (req: ValidatedRequest<typeof refreshTokenSchema>, res: Response) => {
     // Try to get refreshToken from cookies or body
-    const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       throw new ApiError(400, "Refresh token is required");
