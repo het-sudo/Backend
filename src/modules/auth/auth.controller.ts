@@ -67,7 +67,7 @@ export const login: RequestHandler = asyncHandler(
 
 export const refreshToken: RequestHandler = asyncHandler(
   async (req: TypedRequest<RefreshTokenRequest>, res: Response) => {
-    // Try to get refreshToken from cookies or body
+    // Try to get refreshToken from cookies
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -102,8 +102,6 @@ export const logout: RequestHandler = asyncHandler(
 
     await authService.logoutUser(userId);
 
-    // Clear cookies on logout
-    // res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
 
     res.status(200).json({
