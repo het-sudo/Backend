@@ -76,6 +76,9 @@ export const loginUser = async ({ email, password }: Login) => {
       throw new ApiError(401, "Invalid email or password");
     }
 
+    if (!exist.password) {
+      throw new ApiError(401, "Invalid email or password");
+    }
     const passwordmatch = await bcrypt.compare(
       password,
       exist.password as string,

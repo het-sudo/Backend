@@ -13,7 +13,7 @@ const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  let token = req.headers.authorization || req.cookies?.accessToken;
+  let token = req.headers.authorization;
 
   if (!token) {
     logger.warn("Unauthorized: No token provided");
