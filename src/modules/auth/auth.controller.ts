@@ -34,6 +34,7 @@ export const login: RequestHandler = asyncHandler(
       httpOnly: true,
       secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "strict",
     }); // 7 days
 
     res.status(200).json({
@@ -62,6 +63,7 @@ export const refreshToken: RequestHandler = asyncHandler(
       httpOnly: true,
       secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "strict",
     });
 
     res.status(200).json({

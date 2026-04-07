@@ -26,11 +26,13 @@ A robust, production-ready backend starter kit featuring a secure **Dual-Token A
 ## 🚦 Getting Started
 
 ### 1. Prerequisites
+
 - **Node.js** (v18+)
 - **pnpm** (preferred) or npm
 - **MongoDB** (local or Atlas)
 
 ### 2. Environment Setup
+
 Create a `.env` file in the root directory:
 
 ```env
@@ -48,11 +50,13 @@ REFRESH_TOKEN_EXPIRY=7d
 ```
 
 ### 3. Installation
+
 ```bash
 pnpm install
 ```
 
 ### 4. Start the Server
+
 ```bash
 # Development mode (with auto-reload)
 pnpm run dev
@@ -70,25 +74,24 @@ pnpm start
 src/
 ├── common/             # Helpers, Utils, Errors, Middlewares
 ├── config/             # Database, Env config
-├── modules/            
+---constants/
+├── modules/
 │   └── auth/           # Auth Module (Service, Controller, Interface, Routes)
 ├── app.ts              # Express App setup
 ├── server.ts           # Server start point
 └── index.ts            # Main API Router
 ```
 
----
-
 ## 📡 API Endpoints
 
 ### Auth Module (`/api/v1/auth`)
 
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| POST | `/register` | Register a new user | No |
-| POST | `/login` | Log in and receive tokens in cookies | No |
-| POST | `/refresh-token` | Get new access token via refresh token | No (Uses Cookie) |
-| POST | `/logout` | Clear cookies and revoke refresh token | Yes |
+| Method | Endpoint         | Description                            | Auth Required    |
+| :----- | :--------------- | :------------------------------------- | :--------------- |
+| POST   | `/register`      | Register a new user                    | No               |
+| POST   | `/login`         | Log in and receive tokens in cookies   | No               |
+| POST   | `/refresh-token` | Get new access token via refresh token | No (Uses Cookie) |
+| POST   | `/logout`        | Clear cookies and revoke refresh token | Yes              |
 
 ---
 
@@ -104,6 +107,7 @@ Instead of manually adding `Authorization` headers, this project uses **HTTP-onl
 ---
 
 ## 🔒 Security Notes
+
 - Cookies are marked `HttpOnly` to prevent XSS attacks.
 - In production, cookies are automatically set to `Secure: true`.
 - Tokens are stored in the database to allow for remote revocation.
