@@ -6,6 +6,8 @@ import * as authService from "./auth.service.js";
 import type { Response, RequestHandler } from "express";
 import { logger } from "../../common/utils/loggers.js";
 import type { loginSchema, registerSchmea } from "./auth.validator.js";
+import { env } from "../../config/env.js";
+import ms from "ms";
 
 //Controller for user registration
 
@@ -32,10 +34,11 @@ export const login: RequestHandler = asyncHandler(
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: false, // In production, this should be true
+      maxAge: ms(env.REFRESH_TOKEN_EXPIRY),
       sameSite: "strict",
-    }); // 7 days
+    });
+
 
     res.status(200).json({
       success: true,
@@ -62,9 +65,10 @@ export const refreshToken: RequestHandler = asyncHandler(
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: ms(env.REFRESH_TOKEN_EXPIRY),
       sameSite: "strict",
     });
+
 
     res.status(200).json({
       success: true,

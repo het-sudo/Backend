@@ -6,8 +6,14 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  refreshToken?: string;
 }
+
+export interface ISession extends Document {
+  userId: Types.ObjectId;
+  token: string;
+  expiresAt: Date;
+}
+
 
 export interface Register {
   name: string;
