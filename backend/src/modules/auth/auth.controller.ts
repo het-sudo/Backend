@@ -1,0 +1,160 @@
+import asyncHandler from "../../common/utils/asyncHandler.js";
+import type { TypedRequest, RefreshTokenRequest } from "./auth.interface.js";
+import type { ValidatedRequest } from "express-zod-safe";
+import ApiError from "../../common/errors/ApiError.js";
+import * as authService from "./auth.service.js";
+import type { Response, RequestHandler } from "express";
+import { logger } from "../../common/utils/loggers.js";
+import type {
+  loginSchema,
+  registerSchmea,
+  ResetPasswordBody,
+} from "./auth.validator.js";
+import { env } from "../../config/env.js";
+import ms from "ms";
+
+//Controller for user registration
+
+export const register: RequestHandler = asyncHandler(
+  async (req: ValidatedRequest<typeof registerSchmea>, res: Response) => {
+    const newUser = await authService.registerUser(req.body);
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: newUser,
+    });
+  },
+);
+
+// Controller for user login , Issues both access and refresh tokens
+
+export const login: RequestHandler = asyncHandler(
+  async (req: ValidatedRequest<typeof loginSchema>, res: Response) => {
+    const { accessToken, refreshToken, user } = await authService.loginUser(
+      req.body,
+    );
+
+    logger.info(`Login successful for user: ${user.email}`);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, // In production, this should be true
+      maxAge: ms(env.REFRESH_TOKEN_EXPIRY),
+      sameSite: "strict",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User login success",
+      accessToken,
+      user,
+    });
+  },
+);
+
+// Controller for refreshing tokens
+
+export const refreshToken: RequestHandler = asyncHandler(
+  async (req: TypedRequest<RefreshTokenRequest>, res: Response) => {
+    // Try to get refreshToken from cookies
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      throw new ApiError(400, "Refresh token is required");
+    }
+
+    const tokens = await authService.refreshUserTokens(refreshToken);
+
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      maxAge: ms(env.REFRESH_TOKEN_EXPIRY),
+      sameSite: "strict",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Tokens refreshed successfully",
+      accessToken: tokens.accessToken,
+    });
+  },
+);
+
+// Controller for user logout,Clears the refresh token from the database
+
+export const logout: RequestHandler = asyncHandler(
+  async (req: TypedRequest, res: Response) => {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ApiError(401, "User not authenticated");
+    }
+
+    await authService.logoutUser(userId);
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  },
+);
+
+//forgot
+export const forgotPasswordController: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const { email } = req.body;
+
+    const data = await authService.forgotPassword(email);
+
+    res.json({
+      success: true,
+      ...data,
+    });
+  },
+);
+//reset
+
+export const resetPasswordController: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const { userId, token, newPassword } = req.body;
+
+    const result = await authService.resetPassword({
+      userId,
+      token,
+      newPassword,
+    });
+
+    res.json({
+      success: true,
+      ...result,
+    });
+  },
+);
+
+//change password after login
+export const changePasswordController: RequestHandler = asyncHandler(
+  async (req: TypedRequest<ResetPasswordBody>, res) => {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized");
+    }
+
+    const { oldPassword, newPassword } = req.body;
+
+    await authService.changePassword({
+      userId,
+      oldPassword,
+      newPassword,
+    });
+
+    res.json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  },
+);
