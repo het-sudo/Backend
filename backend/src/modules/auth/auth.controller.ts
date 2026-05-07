@@ -102,7 +102,6 @@ export const logout: RequestHandler = asyncHandler(
     });
   },
 );
-
 //forgot
 export const forgotPasswordController: RequestHandler = asyncHandler(
   async (req, res) => {
@@ -123,7 +122,7 @@ export const resetPasswordController: RequestHandler = asyncHandler(
     const { userId, token, newPassword } = req.body;
 
     const result = await authService.resetPassword({
-      userId,
+      // userId,
       token,
       newPassword,
     });
