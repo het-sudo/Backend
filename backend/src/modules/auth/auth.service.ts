@@ -256,7 +256,7 @@ export const resetPassword = async ({
   token,
   newPassword,
 }: {
-  userId: string;
+  // userId: string;
   token: string;
   newPassword: string;
 }) => {

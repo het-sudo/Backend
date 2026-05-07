@@ -4,6 +4,7 @@ import RegisterForm from "./components/auth/RegisterForm";
 import ResetPassword from "./pages/ResetPassword";
 import ForgetPassword from "./pages/ForgetPassword";
 import { Toaster } from "sonner";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<RegisterForm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </div>
   );
